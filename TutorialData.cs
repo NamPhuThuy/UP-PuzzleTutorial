@@ -9,7 +9,7 @@ namespace NamPhuThuy.Tutorial
     [CreateAssetMenu(fileName = "TutorialData", menuName = "Game/Tutorial Data", order = 1)]
     public class TutorialData : ScriptableObject
     {
-        public List<TutorialRecord> data = new List<TutorialRecord>();
+        public TutorialRecord[] data;
 
         private Dictionary<int, TutorialRecord> _dictData;
 
@@ -31,7 +31,7 @@ namespace NamPhuThuy.Tutorial
             EnsureIndex();
             return _dictData.GetValueOrDefault(levelId);
         }
-        
+
         public bool isCurrentLevelHasTut(int levelId)
         {
             EnsureIndex();
@@ -47,7 +47,7 @@ namespace NamPhuThuy.Tutorial
             bool changed = false;
 
             // Auto\-assign level ids for entries with negative id
-            for (int i = 0; i < data.Count; i++)
+            for (int i = 0; i < data.Length; i++)
             {
                 var r = data[i];
                 if (r == null) continue;
@@ -79,13 +79,13 @@ namespace NamPhuThuy.Tutorial
 
         private void BuildIndex()
         {
-            if (data == null || data.Count == 0)
+            if (data == null || data.Length == 0)
             {
                 _dictData = new Dictionary<int, TutorialRecord>(0);
                 return;
             }
 
-            _dictData = new Dictionary<int, TutorialRecord>(data.Count);
+            _dictData = new Dictionary<int, TutorialRecord>(data.Length);
             foreach (var r in data)
             {
                 if (r == null) continue;
@@ -95,12 +95,26 @@ namespace NamPhuThuy.Tutorial
 
         #endregion
     }
-    
+
+    // Use this to override the inspector of Odin Inspector
+#if UNITY_EDITOR
+    [CustomEditor(typeof(TutorialData))]
+    public class TutorialDataEditor : Editor
+    {
+        public override void OnInspectorGUI()
+        {
+            DrawDefaultInspector();
+        }
+    }
+#endif
+
     [Serializable]
     public class TutorialRecord
     {
-        [SerializeField] private int levelId;
-        [SerializeField] private string tutTitle;
+        [SerializeField] public int levelId;
+
+        [SerializeField] private Type type = Type.NONE;
+        [SerializeField] private string tutName;
         [SerializeField] private List<BoosterRule> rules = new();
 
         [SerializeField] private bool isUnlockBooster;
@@ -109,19 +123,27 @@ namespace NamPhuThuy.Tutorial
         [SerializeField] private Sprite tutorialImage;
         [SerializeField] private string description;
 
-        [Tooltip("Ordered steps that define the tutorial flow for this level")]
-        [SerializeField] private List<TutorialStepRecord> steps = new();
-        
+        [Tooltip("Ordered steps that define the tutorial flow for this level")] [SerializeField]
+        private List<TutorialStepRecord> steps = new();
+
         public int LevelId => levelId;
-        public string TutTitle => tutTitle;
+        public Type TutType => type;
+        public string TutName => tutName;
         public List<BoosterRule> Rules => rules;
         public bool IsUnlockBooster => isUnlockBooster;
-        public bool IsUseTutorImage => isUseTutorImage; 
+        public bool IsUseTutorImage => isUseTutorImage;
         public Sprite TutorialImage => tutorialImage;
         public string Description => description;
         public List<TutorialStepRecord> Steps => steps;
+
+        public enum Type
+        {
+            NONE = 0,
+            HAND_CLICK = 1,
+            GUI = 2,
+        }
     }
-    
+
     /// <summary>
     /// 
     /// </summary>
@@ -130,13 +152,14 @@ namespace NamPhuThuy.Tutorial
         NONE = 0,
         CLICK_THE_SOURCE = 1,
         CLICK_THE_TARGET = 2,
-        
+        SHOW_GUI = 3,
+
         /// <summary>
         /// 
         /// </summary>
         HAND_POINT_AND_WAIT_FOR_TARGET_HOLD = 5,
         HAND_POINT_AND_WAIT_FOR_TARGET_CLICK = 6,
-        
+
         /// <summary>
         /// For special custom steps handled in code
         /// </summary>
@@ -146,22 +169,21 @@ namespace NamPhuThuy.Tutorial
     [Serializable]
     public class TutorialStepRecord
     {
-        [SerializeField] private string id; 
+        [SerializeField] private string id;
         [SerializeField] private TutorialStepType type;
 
-        [Tooltip("Optional text shown in popup / speech bubble")]
-        [TextArea]
-        [SerializeField] private string message;
+        [Tooltip("Optional text shown in popup / speech bubble")] [TextArea] [SerializeField]
+        private string message;
 
-        [Tooltip("Optional object reference (e.g. a transform, button, tile root etc.)")]
-        [SerializeField] private string targetTagOrId;
+        [Tooltip("Optional object reference (e.g. a transform, button, tile root etc.)")] [SerializeField]
+        private string targetTagOrId;
 
-        [Tooltip("Optional delay before step starts")]
-        [SerializeField] private float delayBefore = 0f;
+        [Tooltip("Optional delay before step starts")] [SerializeField]
+        private float delayBefore = 0f;
 
-        [Tooltip("Optional timeout after which step auto-completes (0 = never)")]
-        [SerializeField] private float autoCompleteAfter = 0f;
-        
+        [Tooltip("Optional timeout after which step auto-completes (0 = never)")] [SerializeField]
+        private float autoCompleteAfter = 0f;
+
         public string Id => id;
         public TutorialStepType Type => type;
         public string Message => message;
