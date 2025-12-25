@@ -13,15 +13,22 @@ namespace NamPhuThuy.PuzzleTutorial
 {
     public class TutorialHand : MonoBehaviour
     {
+        enum HandType
+        {
+            NONE = 0,
+            IMAGE = 1,
+            SKELETON_GRAPHIC = 2,
+        }
+        
         [Header("Flags")] 
         [SerializeField] private bool isFollowing = false;
+        [SerializeField] private HandType handType = HandType.NONE;
         
         [Header("Components")]
         [SerializeField] private SkeletonGraphic handSkeGraphic;
         [SerializeField] private Image handImage;
         [SerializeField] private Vector3 pivotOffset;
         [SerializeField] private Transform currentTarget;
-        
         
         [Header("Animation Names")]
         private string _animAction = "action";
@@ -66,28 +73,81 @@ namespace NamPhuThuy.PuzzleTutorial
         public void EnableHand()
         {
             DebugLogger.Log();
-            if (handImage != null)
-            {
-               handImage.gameObject.SetActive(true);
-            }
 
-            if (handSkeGraphic != null)
+            switch (handType)
             {
-                handSkeGraphic.gameObject.SetActive(true);
+                case HandType.IMAGE:
+                    if (handImage == null)
+                    {
+                        DebugLogger.LogWarning(message: $"handImage is null");
+                        break;
+                    }
+                    
+                    handImage.gameObject.SetActive(true);
+                    break;
+                case HandType.SKELETON_GRAPHIC:
+                    if (handSkeGraphic == null)
+                    {
+                        DebugLogger.LogWarning(message: $"handSkeGraphic is null");
+                        break;
+                    }
+                    
+                    handSkeGraphic.gameObject.SetActive(true);
+                    break;
+                case HandType.NONE:
+                    DebugLogger.LogWarning(message: $"handType is NONE");
+                    break;
             }
         }
 
         public void DisableHand()
         {
             DebugLogger.Log();
+            switch (handType)
+            {
+                case HandType.IMAGE:
+                    if (handImage == null)
+                    {
+                        DebugLogger.LogWarning(message: $"handImage is null");
+                        break;
+                    }
+                    
+                    handImage.gameObject.SetActive(false);
+                    break;
+                case HandType.SKELETON_GRAPHIC:
+                    if (handSkeGraphic == null)
+                    {
+                        DebugLogger.LogWarning(message: $"handSkeGraphic is null");
+                        break;
+                    }
+                    
+                    handSkeGraphic.gameObject.SetActive(false);
+                    break;
+                case HandType.NONE:
+                    DebugLogger.LogWarning(message: $"handType is NONE");
+                    break;
+            }
+        }
+
+        public void DisableAllHands()
+        {
+            DebugLogger.Log();
             if (handImage != null)
             {
                 handImage.gameObject.SetActive(false);
             }
-
+            else
+            {
+                DebugLogger.LogWarning(message: $"handImage is null");
+            }
+                    
             if (handSkeGraphic != null)
             {
                 handSkeGraphic.gameObject.SetActive(false);
+            }
+            else
+            {
+                DebugLogger.LogWarning(message: $"handSkeGraphic is null");
             }
         }
 

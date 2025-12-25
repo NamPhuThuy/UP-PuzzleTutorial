@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using MoreMountains.Tools;
 using NamPhuThuy.Common;
@@ -30,6 +31,11 @@ namespace NamPhuThuy.PuzzleTutorial
         private Coroutine _runningRoutine;
 
         public bool IsTutorialRunning => _runningRoutine != null;
+
+        #region MonoBehaviour Callbacks
+
+
+        #endregion
 
         private void TryStartTutorialForLevel(int levelId)
         {

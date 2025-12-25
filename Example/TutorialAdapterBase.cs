@@ -1,66 +1,41 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using MoreMountains.Tools;
 using NamPhuThuy.Common;
-using NamPhuThuy.Data;
-using NamPhuThuy.Tutorial;
-using NUnit.Framework.Internal;
 using UnityEngine;
-using UnityEngine.AddressableAssets.Initialization;
-using UnityEngine.Purchasing.Security;
-using Random = UnityEngine.Random;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 
 namespace NamPhuThuy.PuzzleTutorial
 {
-    public partial class TutorialAdapter : MonoBehaviour
+    public class TutorialAdapterBase : MonoBehaviour
     {
         #region Private Serializable Fields
 
         [Header("Flags")]
-        [SerializeField] private bool isForceFollow = false;
+        [SerializeField] protected  bool isForceFollow = false;
         public bool IsForceFollow => isForceFollow;
         
         [Header("Stats")] 
-        [SerializeField] private int levelId;
+        [SerializeField] protected  int levelId;
         
         [Header("Components")]
-        [SerializeField] private TutorialRecord tutorialRecord;
-        [SerializeField] private TutorialStepRecord currentStepRecord;
+        [SerializeField] protected  TutorialRecord tutorialRecord;
+        [SerializeField] protected  TutorialStepRecord currentStepRecord;
 
         #endregion
 
         #region Private Fields
         
-        private Coroutine _tutorialRoutine;
-        private int _currentStepIndex;
-        private bool _isCurrentStepCompleted;
-        #endregion
-
-        #region MonoBehaviour Callbacks
-
-        private void Awake()
-        {
-            MMEventManager.RegisterAllCurrentEvents(this);
-        }
-
-        private void OnDestroy()
-        {
-            MMEventManager.UnregisterAllCurrentEvents(this);
-        }
-
+        protected Coroutine _tutorialRoutine;
+        protected int _currentStepIndex;
+        protected bool _isCurrentStepCompleted;
         #endregion
 
         #region Public Methods
                 
-        public void ResetState()
+        public virtual void ResetState()
         {
-            DebugLogger.Log();
-            
             if (_tutorialRoutine != null)
             {
                 StopCoroutine(_tutorialRoutine);
@@ -69,7 +44,7 @@ namespace NamPhuThuy.PuzzleTutorial
 
             if (TutorialManager.Ins != null && TutorialManager.Ins.TutorialHand != null)
             {
-                TutorialManager.Ins.TutorialHand.DisableHand();
+                TutorialManager.Ins.TutorialHand.DisableAllHands();
             }
         }
 
