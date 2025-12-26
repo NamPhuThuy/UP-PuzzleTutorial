@@ -156,6 +156,7 @@ namespace NamPhuThuy.PuzzleTutorial
         /// </summary>
         HAND_POINT_AND_WAIT_FOR_TARGET_HOLD = 5,
         HAND_POINT_AND_WAIT_FOR_TARGET_CLICK = 6,
+        HAND_POINT_FOR_A_LITTLE_WHILE = 7,
 
         /// <summary>
         /// For special custom steps handled in code

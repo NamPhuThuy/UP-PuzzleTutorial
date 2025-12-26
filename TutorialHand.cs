@@ -248,6 +248,45 @@ namespace NamPhuThuy.PuzzleTutorial
                 transform.DOMove(screenWithOffset, duration);
             }
         }
+        
+        public void MoveToTargetRectTransformTween(RectTransform target, float duration = 0.5f)
+        {
+            if (target == null) return;
+
+            if (rectTransform == null)
+            {
+                rectTransform = GetComponent<RectTransform>();
+            }
+
+            if (rectTransform == null) return;
+
+            RectTransform parentRect = rectTransform.parent as RectTransform;
+            if (parentRect == null) return;
+
+            Canvas canvas = rectTransform.GetComponentInParent<Canvas>();
+            if (canvas == null) return;
+
+            Camera cam = canvas.renderMode == RenderMode.ScreenSpaceOverlay
+                ? null
+                : (canvas.worldCamera != null ? canvas.worldCamera : Camera.main);
+
+            Vector2 screenPoint = RectTransformUtility.WorldToScreenPoint(cam, target.position);
+
+            if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(parentRect, screenPoint, cam, out Vector2 localPoint))
+                return;
+
+            Vector2 targetAnchoredPos = localPoint + (Vector2)pivotOffset;
+
+            rectTransform.DOKill();
+            rectTransform.DOAnchorPos(targetAnchoredPos, duration);
+        }
+        
+        public IEnumerator IE_TurnOffWithDelay(float delay)
+        {
+            DebugLogger.Log(message: $"Delay: {delay}");
+            yield return new WaitForSeconds(delay);
+            DisableHand();
+        }
 
         #endregion
         
