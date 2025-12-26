@@ -21,6 +21,7 @@ namespace NamPhuThuy.PuzzleTutorial
         
         [Header("Components")]
         [SerializeField] protected  TutorialRecord tutorialRecord;
+        public TutorialRecord TutorialRecord => tutorialRecord;
         [SerializeField] protected  TutorialStepRecord currentStepRecord;
 
         #endregion

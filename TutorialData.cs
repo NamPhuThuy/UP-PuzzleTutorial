@@ -118,6 +118,7 @@ namespace NamPhuThuy.PuzzleTutorial
         [SerializeField] private List<BoosterRule> rules = new();
 
         [SerializeField] private bool isUnlockBooster;
+        [SerializeField] private GameEnum.BoosterType unlockedBoosterType;
         [SerializeField] private string description;
 
         [Tooltip("Ordered steps that define the tutorial flow for this level")] [SerializeField]
@@ -128,6 +129,7 @@ namespace NamPhuThuy.PuzzleTutorial
         public string TutName => tutName;
         public List<BoosterRule> Rules => rules;
         public bool IsUnlockBooster => isUnlockBooster;
+        public GameEnum.BoosterType UnlockedBoosterType => unlockedBoosterType;
         public string Description => description;
         public List<TutorialStepRecord> Steps => steps;
 
