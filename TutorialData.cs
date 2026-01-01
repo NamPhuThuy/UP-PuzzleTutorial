@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
-using NamPhuThuy.Data;
-using NamPhuThuy.Tutorial;
+using NamPhuThuy.DataManage;
 using UnityEditor;
 using UnityEngine;
 
@@ -117,6 +116,8 @@ namespace NamPhuThuy.PuzzleTutorial
         [SerializeField] private Type type = Type.NONE;
         [SerializeField] private string tutName;
         [SerializeField] private List<BoosterRule> rules = new();
+        [SerializeField] private Sprite tutorialImage;
+        public Sprite TutorialImage => tutorialImage;
 
         [SerializeField] private bool isUnlockBooster;
         [SerializeField] private BoosterType unlockedBoosterType;
