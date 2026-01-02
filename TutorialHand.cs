@@ -287,10 +287,65 @@ namespace NamPhuThuy.PuzzleTutorial
             yield return new WaitForSeconds(delay);
             DisableHand();
         }
-
-        #endregion
         
-        #region Private Methods
+        /// <summary>
+        /// Move the hand along a curved path between 2 screen points.
+        /// Uses a 3-point CatmullRom path: from -> control -> to.
+        /// </summary>
+        public Tween TweenMoveBetweenScreenPointsCurved(
+            Vector2 fromScreenPos,
+            Vector2 toScreenPos,
+            float duration = 0.5f,
+            float curveHeight = 120f,
+            bool loopPingPong = false,
+            int loops = -1,
+            Ease ease = Ease.InOutSine)
+        {
+            if (rectTransform == null)
+            {
+                rectTransform = GetComponent<RectTransform>();
+            }
+
+            // Apply pivotOffset as screen-space offset
+            var from = new Vector3(fromScreenPos.x + pivotOffset.x, fromScreenPos.y + pivotOffset.y, pivotOffset.z);
+            var to = new Vector3(toScreenPos.x + pivotOffset.x, toScreenPos.y + pivotOffset.y, pivotOffset.z);
+
+            // Build a simple arc control point (perpendicular offset)
+            Vector3 mid = (from + to) * 0.5f;
+            Vector3 dir = (to - from);
+            Vector3 perp = Vector3.zero;
+            if (dir.sqrMagnitude > 0.0001f)
+            {
+                perp = new Vector3(-dir.y, dir.x, 0f).normalized;
+            }
+
+            Vector3 control = mid + (perp * curveHeight);
+
+            Tween t;
+            if (rectTransform != null)
+            {
+                rectTransform.DOKill();
+                rectTransform.position = from;
+
+                t = rectTransform
+                    .DOPath(new[] { from, control, to }, duration, PathType.CatmullRom)
+                    .SetEase(ease);
+            }
+            else
+            {
+                transform.DOKill();
+                transform.position = from;
+
+                t = transform
+                    .DOPath(new[] { from, control, to }, duration, PathType.CatmullRom)
+                    .SetEase(ease);
+            }
+
+            if (loopPingPong)
+                t.SetLoops(loops, LoopType.Yoyo);
+
+            return t;
+        }
         
         public void PlayAnimation(string animName, bool loop = true)
         {
@@ -301,6 +356,41 @@ namespace NamPhuThuy.PuzzleTutorial
                 handSkeGraphic.AnimationState.SetAnimation(0, animName, loop);
             }
         }
+        
+        public void StopAnimation()
+        {
+            DebugLogger.Log(message: $"StopAnimation");
+            if (handSkeGraphic != null)
+            {
+                handSkeGraphic.AnimationState.ClearTrack(0);
+            }
+        }
+        
+        public void SetAnchoredPosition(Vector2 anchoredPosition)
+        {
+            if (rectTransform == null)
+                rectTransform = GetComponent<RectTransform>();
+
+            if (rectTransform == null) return;
+
+            rectTransform.anchoredPosition = anchoredPosition;
+        }
+
+        public Vector2 GetAnchoredPosition()
+        {
+            if (rectTransform == null)
+                rectTransform = GetComponent<RectTransform>();
+
+            if (rectTransform == null) return Vector2.zero;
+
+            return rectTransform.anchoredPosition;
+        }
+
+        #endregion
+        
+        #region Private Methods
+        
+        
         
         #endregion
 

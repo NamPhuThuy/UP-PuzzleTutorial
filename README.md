@@ -1,5 +1,9 @@
 # UPack-Puzzle-Tutorial
 
+## IDEA
+
+Create some default step for the tutorial hand, the game will create a TutorialAdapter to connect between the main-game and the Tutorial module
+
 ## HOW TO USE
 
 Create a new partial class TutorialAdapter in your project 
