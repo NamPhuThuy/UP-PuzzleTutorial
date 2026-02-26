@@ -275,10 +275,10 @@ namespace NamPhuThuy.PuzzleTutorial
             if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(parentRect, screenPoint, cam, out Vector2 localPoint))
                 return;
 
-            Vector2 targetAnchoredPos = localPoint + (Vector2)pivotOffset + (Vector2)offset;
+            Vector3 targetLocalPos = (Vector3)localPoint + pivotOffset + offset;
 
             rectTransform.DOKill();
-            rectTransform.DOAnchorPos(targetAnchoredPos, duration);
+            rectTransform.DOLocalMove(targetLocalPos, duration);
         }
         
         public IEnumerator IE_TurnOffWithDelay(float delay)

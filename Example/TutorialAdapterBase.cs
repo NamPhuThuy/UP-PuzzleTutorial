@@ -43,15 +43,24 @@ namespace NamPhuThuy.PuzzleTutorial
                 _tutorialRoutine = null;
             }
 
+            _currentStepIndex = 0;
+            _isCurrentStepCompleted = false;
+
             if (TutorialManager.Ins != null && TutorialManager.Ins.TutorialHand != null)
             {
                 TutorialManager.Ins.TutorialHand.DisableAllHands();
             }
         }
 
-        public void InitData(int _levelId)
+        public virtual void InitData(int _levelId)
         {
             DebugLogger.Log();
+
+            if (TutorialManager.Ins == null || TutorialManager.Ins.Data == null)
+            {
+                DebugLogger.LogWarning("TutorialManager or Data is not initialized.");
+                return;
+            }
 
             // Set Values
             this.levelId = _levelId;
@@ -64,19 +73,15 @@ namespace NamPhuThuy.PuzzleTutorial
             }
 
             _currentStepIndex = 0;
-            currentStepRecord = tutorialRecord.Steps[_currentStepIndex];
+            if (tutorialRecord.Steps != null && tutorialRecord.Steps.Count > 0)
+            {
+                currentStepRecord = tutorialRecord.Steps[_currentStepIndex];
+            }
 
-            if (tutorialRecord.TutType == TutorialRecord.Type.HAND_CLICK)
-            {
-                isForceFollow = true;
-            }
-            else
-            {
-                isForceFollow = false;
-            }
+            isForceFollow = tutorialRecord.TutType == TutorialRecord.Type.HAND_CLICK;
         }
 
-        public void ActiveCurrentTut()
+        public virtual void ActivateTutorial()
         {
             DebugLogger.Log();
             if (!isForceFollow || tutorialRecord == null || tutorialRecord.Steps == null ||
@@ -137,22 +142,31 @@ namespace NamPhuThuy.PuzzleTutorial
         /// Start a single step: show hand, highlight piece, lock input, etc.
         /// Customize this logic for each step type.
         /// </summary>
-        private void StartStep(TutorialStepRecord step)
+        protected virtual void StartStep(TutorialStepRecord step)
         {
             DebugLogger.LogFrog(message:$"Type: {step.Type}");
+            
+            Transform target = GetTargetForStep(step);
+            
             switch (step.Type)
             {
                 case TutorialStepType.CLICK_THE_SOURCE:
-                    TutorialManager.Ins.TutorialHand.EnableHand();
-                    TutorialManager.Ins.TutorialHand.MoveToScreenPointFromWorldTween(transform.position, 0.4f);
-                    break;
                 case TutorialStepType.CLICK_THE_TARGET:
-                 
+                    if (target != null && TutorialManager.Ins.TutorialHand != null)
+                    {
+                        TutorialManager.Ins.TutorialHand.EnableHand();
+                        TutorialManager.Ins.TutorialHand.MoveToScreenPointFromWorldTween(target.position, 0.4f);
+                    }
                     break;
             }
         }
 
-        private void EndTutorialSequence()
+        protected virtual Transform GetTargetForStep(TutorialStepRecord step)
+        {
+            return transform;
+        }
+
+        protected virtual void EndTutorialSequence()
         {
             DebugLogger.Log();
             if (TutorialManager.Ins != null && TutorialManager.Ins.TutorialHand != null)
@@ -164,22 +178,6 @@ namespace NamPhuThuy.PuzzleTutorial
         }
         #endregion
 
-        #region LEVEL 1 TUTORIAL
-
-        public void ResetDataLevel1()
-        {
-            DebugLogger.LogFrog();
-        }
-        
-        public void InitDataLevel1()
-        {
-            DebugLogger.LogFrog(message:$"");
-       
-        }
-
-
-        #endregion
-        
         #region Events Listen
 
         public struct ESampleTutorial
@@ -188,9 +186,9 @@ namespace NamPhuThuy.PuzzleTutorial
         }
         
         
-        public void OnReceiveEvent(ESampleTutorial @event)
+        public virtual void OnReceiveEvent(ESampleTutorial @event)
         {
-            throw new NotImplementedException();
+            
         }
 
         #endregion

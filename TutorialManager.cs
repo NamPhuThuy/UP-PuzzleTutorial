@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using MoreMountains.Tools;
 using UnityEngine;
 
 namespace NamPhuThuy.PuzzleTutorial
