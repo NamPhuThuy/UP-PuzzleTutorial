@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace NamPhuThuy.PuzzleTutorial
 {
-    [CreateAssetMenu(fileName = "TutorialData", menuName = "Game/Tutorial Data", order = 1)]
+    [CreateAssetMenu(fileName = "TutorialData", menuName = "NamPhuThuy_PuzzleTutorial/Tutorial Data", order = 1)]
     public class TutorialData : ScriptableObject
     {
         public TutorialRecord[] data;
@@ -149,16 +149,19 @@ namespace NamPhuThuy.PuzzleTutorial
     public enum TutorialStepType
     {
         NONE = 0,
-        CLICK_THE_SOURCE = 1,
-        CLICK_THE_TARGET = 2,
-        SHOW_GUI = 3,
+        CLICK_FIRST_ITEM = 1, // Click the 1st item in set
+        CLICK_SECOND_ITEM = 2, // Click the 2nd item in set
+        CLICK_THIRD_ITEM = 3, // Click the 3rd item in set
+        CLICK_FOURTH_ITEM = 4, // Click the 4th item in set
+        SHOW_GUI = 7,
+        SHOW_PANEL = 9,
 
         /// <summary>
         /// 
         /// </summary>
-        HAND_POINT_AND_WAIT_FOR_TARGET_HOLD = 5,
-        HAND_POINT_AND_WAIT_FOR_TARGET_CLICK = 6,
-        HAND_POINT_FOR_BOOSTER = 7,
+        HAND_POINT_AND_WAIT_FOR_TARGET_HOLD = 12,
+        HAND_POINT_AND_WAIT_FOR_TARGET_CLICK = 13,
+        HAND_POINT_FOR_BOOSTER = 14,
 
         /// <summary>
         /// For special custom steps handled in code

@@ -1,5 +1,9 @@
+/*
+Author: NamPhuThuy
+Github: https://github.com/NamPhuThuy
+*/
+
 using System.Collections;
-using System.Collections.Generic;
 using DG.Tweening;
 using NamPhuThuy.Common;
 using Spine.Unity;

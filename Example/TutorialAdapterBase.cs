@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using NamPhuThuy.Common;
 using UnityEngine;
 #if UNITY_EDITOR
 using UnityEditor;
@@ -12,6 +11,9 @@ namespace NamPhuThuy.PuzzleTutorial
     {
         #region Private Serializable Fields
 
+        /// <summary>
+        /// Is force the playe follow the tutorial-step
+        /// </summary>
         [Header("Flags")]
         [SerializeField] protected  bool isForceFollow = false;
         public bool IsForceFollow => isForceFollow;
@@ -23,18 +25,81 @@ namespace NamPhuThuy.PuzzleTutorial
         [SerializeField] protected  TutorialRecord tutorialRecord;
         public TutorialRecord TutorialRecord => tutorialRecord;
         [SerializeField] protected  TutorialStepRecord currentStepRecord;
-
+        public TutorialStepRecord CurrentStepRecord => currentStepRecord;
+        
+        [SerializeField] protected GameObject currentTarget;
+        public GameObject CurrentTarget => currentTarget;
+        
         #endregion
 
         #region Private Fields
         
         protected Coroutine _tutorialRoutine;
-        protected int _currentStepIndex;
-        protected bool _isCurrentStepCompleted;
+        [SerializeField] protected int _currentStepIndex;
+        [SerializeField] protected bool _isCurrentStepCompleted;
         #endregion
 
         #region Public Methods
-                
+        
+        /// <summary>
+        /// External call from gameplay when the current step is completed.
+        /// For example: called from a listener when user taps correct piece, etc.
+        /// </summary>
+        public virtual void OnStepCompleted()
+        {
+            Debug.Log(message: $"Step completed from gameplay at index: {_currentStepIndex}");
+            _isCurrentStepCompleted = true;
+        }
+      
+        #endregion
+
+        #region Concrete Methods
+        
+        /// <summary>
+        /// Init tutorial data for the current level
+        /// </summary>
+        /// <param name="_levelId"></param>
+        public virtual void InitData(int _levelId)
+        {
+            // Set Values
+            this.levelId = _levelId;
+            tutorialRecord = TutorialManager.Ins.Data.GetTutRecord(levelId);
+            if (tutorialRecord == null)
+            {
+                Debug.LogWarning(message: $"No tutorial record found for levelId: {levelId}");
+                isForceFollow = false;
+                return;
+            }
+
+            _currentStepIndex = 0;
+            if (tutorialRecord.Steps != null && tutorialRecord.Steps.Count > 0)
+            {
+                currentStepRecord = tutorialRecord.Steps[_currentStepIndex];
+            }
+
+            isForceFollow = tutorialRecord.TutType == TutorialRecord.Type.HAND_CLICK;
+        }
+
+        public virtual void InitData(GameObject currentLevel, int levelId)
+        {
+            this.levelId = levelId;
+            tutorialRecord = TutorialManager.Ins.Data.GetTutRecord(levelId);
+            if (tutorialRecord == null)
+            {
+                Debug.LogWarning(message: $"No tutorial record found for levelId: {levelId}");
+                isForceFollow = false;
+                return;
+            }
+
+            _currentStepIndex = 0;
+            if (tutorialRecord.Steps != null && tutorialRecord.Steps.Count > 0)
+            {
+                currentStepRecord = tutorialRecord.Steps[_currentStepIndex];
+            }
+
+            isForceFollow = tutorialRecord.TutType == TutorialRecord.Type.HAND_CLICK;
+        }
+        
         public virtual void ResetState()
         {
             if (_tutorialRoutine != null)
@@ -52,123 +117,8 @@ namespace NamPhuThuy.PuzzleTutorial
             }
         }
 
-        public virtual void InitData(int _levelId)
-        {
-            DebugLogger.Log();
-
-            if (TutorialManager.Ins == null || TutorialManager.Ins.Data == null)
-            {
-                DebugLogger.LogWarning("TutorialManager or Data is not initialized.");
-                return;
-            }
-
-            // Set Values
-            this.levelId = _levelId;
-            tutorialRecord = TutorialManager.Ins.Data.GetTutRecord(levelId);
-            if (tutorialRecord == null)
-            {
-                DebugLogger.LogWarning(message: $"No tutorial record found for levelId: {levelId}");
-                isForceFollow = false;
-                return;
-            }
-
-            _currentStepIndex = 0;
-            if (tutorialRecord.Steps != null && tutorialRecord.Steps.Count > 0)
-            {
-                currentStepRecord = tutorialRecord.Steps[_currentStepIndex];
-            }
-
-            isForceFollow = tutorialRecord.TutType == TutorialRecord.Type.HAND_CLICK;
-        }
-
-        public virtual void ActivateTutorial()
-        {
-            DebugLogger.Log();
-            if (!isForceFollow || tutorialRecord == null || tutorialRecord.Steps == null ||
-                tutorialRecord.Steps.Count == 0)
-            {
-                DebugLogger.Log(message: $"No tutorial to run for levelId: {levelId}");
-                return;
-            }
-
-            if (_tutorialRoutine != null)
-            {
-                DebugLogger.Log(message: $"Tutorial already running.");
-                return;
-            }
-
-            _currentStepIndex = 0;
-            
-            _tutorialRoutine = StartCoroutine(RunTutorialSequence());
-            
-        }
-        
-        /// <summary>
-        /// External call from gameplay when the current step is completed.
-        /// For example: called from a listener when user taps correct piece, etc.
-        /// </summary>
-        public void OnStepCompletedFromGameplay()
-        {
-            DebugLogger.Log(message: $"Step completed from gameplay at index: {_currentStepIndex}");
-            _isCurrentStepCompleted = true;
-        }
-        
-        private IEnumerator RunTutorialSequence()
-        {
-            DebugLogger.LogFrog();
-            
-            while (_currentStepIndex < tutorialRecord.Steps.Count)
-            {
-                currentStepRecord = tutorialRecord.Steps[_currentStepIndex];
-                DebugLogger.Log(message: $"Starting step index: {_currentStepIndex}");
-
-                _isCurrentStepCompleted = false;
-                StartStep(currentStepRecord);
-
-                // Wait until gameplay notifies completion
-                yield return new WaitUntil(() => _isCurrentStepCompleted);
-
-                DebugLogger.Log(message: $"Finished step index: {_currentStepIndex}");
-                _currentStepIndex++;
-            }
-
-            DebugLogger.Log(message: "All tutorial steps completed.");
-            EndTutorialSequence();
-
-            _tutorialRoutine = null;
-        }
-
-        /// <summary>
-        /// Start a single step: show hand, highlight piece, lock input, etc.
-        /// Customize this logic for each step type.
-        /// </summary>
-        protected virtual void StartStep(TutorialStepRecord step)
-        {
-            DebugLogger.LogFrog(message:$"Type: {step.Type}");
-            
-            Transform target = GetTargetForStep(step);
-            
-            switch (step.Type)
-            {
-                case TutorialStepType.CLICK_THE_SOURCE:
-                case TutorialStepType.CLICK_THE_TARGET:
-                    if (target != null && TutorialManager.Ins.TutorialHand != null)
-                    {
-                        TutorialManager.Ins.TutorialHand.EnableHand();
-                        TutorialManager.Ins.TutorialHand.MoveToScreenPointFromWorldTween(target.position, 0.4f);
-                    }
-                    break;
-            }
-        }
-
-        protected virtual Transform GetTargetForStep(TutorialStepRecord step)
-        {
-            return transform;
-        }
-
         protected virtual void EndTutorialSequence()
         {
-            DebugLogger.Log();
             if (TutorialManager.Ins != null && TutorialManager.Ins.TutorialHand != null)
             {
                 TutorialManager.Ins.TutorialHand.DisableHand();
@@ -176,23 +126,109 @@ namespace NamPhuThuy.PuzzleTutorial
 
             // Optionally trigger an "all steps done" event here.
         }
-        #endregion
-
-        #region Events Listen
-
-        public struct ESampleTutorial
+        
+        public virtual void ActivateTutorial()
         {
-            public int eventID;
+            Debug.Log(message:$"[TutorialAdapterBase].ActiveTutorial()");
+            if (tutorialRecord == null || tutorialRecord.Steps == null ||
+                tutorialRecord.Steps.Count == 0)
+            {
+                Debug.Log(message: $"No tutorial to run for levelId: {levelId}");
+                return;
+            }
+
+            if (_tutorialRoutine != null)
+            {
+                Debug.Log(message: $"Tutorial already running.");
+                return;
+            }
+
+            _currentStepIndex = 0;
+            _tutorialRoutine = StartCoroutine(IE_TutorialSequence());
         }
+
+        private Coroutine _autoCompleteCo;
         
-        
-        public virtual void OnReceiveEvent(ESampleTutorial @event)
+        private IEnumerator IE_TutorialSequence()
         {
+            while (_currentStepIndex < tutorialRecord.Steps.Count)
+            {
+                currentStepRecord = tutorialRecord.Steps[_currentStepIndex];
+                Debug.Log(message: $"Starting step index: {_currentStepIndex}");
+
+                _isCurrentStepCompleted = false;
+                StartStep(currentStepRecord);
+
+                if (currentStepRecord.AutoCompleteAfter != 0)
+                {
+                    _autoCompleteCo = StartCoroutine(IE_AutoComplete(currentStepRecord.AutoCompleteAfter));
+                }
+
+                yield return new WaitUntil(() => _isCurrentStepCompleted);
+                if (_autoCompleteCo != null) StopCoroutine(_autoCompleteCo); // Ensure the auto-complete mechanic is finished
+
+                Debug.Log(message: $"Finished step index: {_currentStepIndex}");
+                _currentStepIndex++;
+            }
+
+            Debug.Log(message: "All tutorial steps completed.");
+            EndTutorialSequence();
+
+            _tutorialRoutine = null;
+
+            IEnumerator IE_AutoComplete(float delay)
+            {
+                yield return new WaitForSeconds(delay);
+                _isCurrentStepCompleted = true;
+            }
+        }
+        #endregion
+        
+
+        #region Template Methods
+
+        protected virtual GameObject GetTargetForStep(TutorialStepRecord step)
+        {
+            switch (step.Type)
+            {
+                case TutorialStepType.CLICK_FIRST_ITEM:
+                    break;
+                case TutorialStepType.CLICK_SECOND_ITEM:
+                    break;
+                case TutorialStepType.CLICK_THIRD_ITEM:
+                    break;
+            }
             
+            
+            return gameObject;
+        }
+        
+
+        /// <summary>
+        /// Start a single step: show hand, highlight piece, lock input, etc.
+        /// Customize this logic for each step type.
+        /// </summary>
+        protected virtual void StartStep(TutorialStepRecord step)
+        {
+            GameObject target = GetTargetForStep(step);
+            
+            switch (step.Type)
+            {
+                case TutorialStepType.CLICK_FIRST_ITEM:
+                case TutorialStepType.CLICK_SECOND_ITEM:
+                    if (target != null && TutorialManager.Ins.TutorialHand != null)
+                    {
+                        TutorialManager.Ins.TutorialHand.EnableHand();
+                        TutorialManager.Ins.TutorialHand.MoveToScreenPointFromWorldTween(target.transform.position, 0.4f);
+                    }
+                    break;
+            }
         }
 
-        #endregion
 
+        
+        #endregion
+        
         #region Editor Methods
 
         public void ResetValues()

@@ -1,3 +1,8 @@
+/*
+Author: NamPhuThuy
+Github: https://github.com/NamPhuThuy
+*/
+
 using UnityEngine;
 
 namespace NamPhuThuy.PuzzleTutorial
@@ -12,6 +17,9 @@ namespace NamPhuThuy.PuzzleTutorial
         [SerializeField] private TutorialData data;
         public TutorialData Data => data;
         [SerializeField] private TutorialHand _tutorialHand;
+
+        public TutorialAdapterBase tutorialAdapter;
+        
         public TutorialHand TutorialHand
         {
             get
@@ -19,6 +27,23 @@ namespace NamPhuThuy.PuzzleTutorial
                 return _tutorialHand;
             }
             
+        }
+
+        [Header("Prefabs")] 
+        [SerializeField] private TutorialPanel tutorialPanelPrefab;
+        [SerializeField] private TutorialPanel tutorialPanel;
+
+        public TutorialPanel TutorialPanel
+        {
+            get
+            {
+                if (tutorialPanel == null)
+                {
+                    tutorialPanel = Instantiate(tutorialPanelPrefab, parent: transform);
+                }
+
+                return tutorialPanel;
+            }
         }
 
         #region MonoBehaviour Callbacks

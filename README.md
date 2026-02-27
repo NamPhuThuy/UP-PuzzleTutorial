@@ -6,14 +6,23 @@ Create some default step for the tutorial hand, the game will create a TutorialA
 
 ## HOW TO USE
 
-Create a new partial class TutorialAdapter in your project 
-Create the scriptableObject TutorialData
-The submodule should be placed like this:  
+Step 1: Create a new class TutorialAdapter inhertited from TutorialAdapterBase in your project
+Step 2: Create the scriptableObject TutorialData
 
+The submodule should be placed like this:
 <pre>
 _Project/
 ├── Tutorial_Module/
-│   ├── TutorialAdapter.Extend.cs
+│   ├── TutorialAdapter.cs
 │   ├── TutorialData.asset
 │   └── UPack-Puzzle-Tutorial/
+│   │   ├── 
+│   │   ├── TutorialHand.cs // Control the tutorial-hand
+│   │   ├── TutorialData.cs
+│   │   ├── 
+│   │   ├── TutorialManager.cs //
 </pre>
+
+
+## NOTE
+When tutorial-step is completed in gameplay, call the TutorialAdapterBase.OnStepCompletedFromGameplay() to mark the completion
