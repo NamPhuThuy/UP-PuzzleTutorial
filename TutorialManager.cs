@@ -26,7 +26,7 @@ namespace NamPhuThuy.PuzzleTutorial
             {
                 return _tutorialHand;
             }
-            
+              
         }
 
         [Header("Prefabs")] 
@@ -40,6 +40,7 @@ namespace NamPhuThuy.PuzzleTutorial
                 if (tutorialPanel == null)
                 {
                     tutorialPanel = Instantiate(tutorialPanelPrefab, parent: transform);
+                    tutorialPanel.gameObject.SetActive(false);
                 }
 
                 return tutorialPanel;

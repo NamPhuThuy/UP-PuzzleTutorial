@@ -19,7 +19,8 @@ namespace NamPhuThuy.PuzzleTutorial
     {
         #region Private Serializable Fields
 
-        //[Header("Flags")]
+        [Header("Flags")] 
+        public bool IsEnable;
 
         //[Header("Stats")]
 
@@ -60,6 +61,12 @@ namespace NamPhuThuy.PuzzleTutorial
         public void Show(float duration = 0.5f)
         {
             Debug.Log(message:$"[TutorialPanel].Show()");
+            if (!IsEnable)
+            {
+                Debug.Log(message:$"[TutorialPanel] IsEnable is false");
+                return;
+            }
+            
             gameObject.SetActive(true);
             StartCoroutine(IE_Show(duration));
             
@@ -113,6 +120,7 @@ namespace NamPhuThuy.PuzzleTutorial
         private void OnClickSkip()
         {
             Debug.Log(message:$"[TutorialPanel].OnClickSkip()");
+            IsEnable = false;
             Hide();
         }
 
