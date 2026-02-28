@@ -127,6 +127,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 729116b944aa12140a61928d3b87d79a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NamPhuThuy.PuzzleTutorial.TutorialPanel
+  IsEnable: 1
   skipButton: {fileID: 3978271361046306550}
   panelRT: {fileID: 3112206521981301849}
   descriptionText: {fileID: 7858350888881376700}
