@@ -198,6 +198,61 @@ namespace NamPhuThuy.PuzzleTutorial
             }
         }
 
+        /// <summary>
+        /// Moves the hand from one screen position to another using DOTween.
+        /// Useful for UI-space tutorials where start and end points are already in screen coordinates.
+        /// </summary>
+        /// <param name="fromScreenPos">Starting screen position (pixels)</param>
+        /// <param name="toScreenPos">Target screen position (pixels)</param>
+        /// <param name="duration">Duration of the tween in seconds</param>
+        /// <param name="ease">Easing function</param>
+        /// <param name="loopPingPong">Whether to loop back and forth</param>
+        /// <param name="loops">Number of loops (-1 = infinite)</param>
+        /// <returns>The DOTween Tween instance (so caller can chain/kill it)</returns>
+        public Tween MoveInScreenSpaceTween(
+            Vector2 fromScreenPos,
+            Vector2 toScreenPos,
+            float duration = 0.5f,
+            Ease ease = Ease.InOutSine,
+            bool loopPingPong = false,
+            int loops = -1)
+        {
+            DebugLogger.Log(message: $"From: {fromScreenPos}, To: {toScreenPos}, Duration: {duration}");
+
+            if (rectTransform == null)
+                rectTransform = GetComponent<RectTransform>();
+
+            // Apply pivotOffset as screen-space offset (z ignored for screen)
+            Vector3 from = new Vector3(
+                fromScreenPos.x + pivotOffset.x,
+                fromScreenPos.y + pivotOffset.y,
+                pivotOffset.z
+            );
+            Vector3 to = new Vector3(
+                toScreenPos.x + pivotOffset.x,
+                toScreenPos.y + pivotOffset.y,
+                pivotOffset.z
+            );
+
+            Tween t;
+            if (rectTransform != null)
+            {
+                rectTransform.DOKill();
+                rectTransform.position = from;
+                t = rectTransform.DOMove(to, duration).SetEase(ease);
+            }
+            else
+            {
+                transform.DOKill();
+                transform.position = from;
+                t = transform.DOMove(to, duration).SetEase(ease);
+            }
+
+            if (loopPingPong)
+                t.SetLoops(loops, LoopType.Yoyo);
+
+            return t;
+        }
 
         public void MoveHandToWorldObject(Transform targetTransform)
         {
@@ -222,6 +277,11 @@ namespace NamPhuThuy.PuzzleTutorial
             SetScreenPosition(screenPos);
         }
         
+        /// <summary>
+        /// If the input target were worldPosition
+        /// </summary>
+        /// <param name="worldPosition"></param>
+        /// <param name="duration"></param>
         public void MoveToScreenPointFromWorldTween(Vector3 worldPosition, float duration = 0.5f)
         {
             DebugLogger.Log();

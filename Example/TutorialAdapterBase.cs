@@ -197,6 +197,8 @@ namespace NamPhuThuy.PuzzleTutorial
                     break;
                 case TutorialStepType.CLICK_THIRD_ITEM:
                     break;
+                case TutorialStepType.HAND_POINT_TARGET_WAIT_CLICK:
+                    break;
             }
             
             
@@ -221,6 +223,8 @@ namespace NamPhuThuy.PuzzleTutorial
                         TutorialManager.Ins.TutorialHand.EnableHand();
                         TutorialManager.Ins.TutorialHand.MoveToScreenPointFromWorldTween(target.transform.position, 0.4f);
                     }
+                    break;
+                case TutorialStepType.HAND_POINT_TARGET_WAIT_CLICK:
                     break;
             }
         }
