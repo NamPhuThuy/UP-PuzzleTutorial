@@ -57,9 +57,10 @@ namespace NamPhuThuy.PuzzleTutorial
         
         /// <summary>
         /// Init tutorial data for the current level
+        /// Return value show that wether the Init-process is success or not
         /// </summary>
         /// <param name="_levelId"></param>
-        public virtual void InitData(int _levelId)
+        public virtual bool TryInitData(int _levelId)
         {
             // Set Values
             this.levelId = _levelId;
@@ -68,7 +69,7 @@ namespace NamPhuThuy.PuzzleTutorial
             {
                 Debug.LogWarning(message: $"No tutorial record found for levelId: {levelId}");
                 isForceFollow = false;
-                return;
+                return false;
             }
 
             _currentStepIndex = 0;
@@ -78,9 +79,16 @@ namespace NamPhuThuy.PuzzleTutorial
             }
 
             isForceFollow = tutorialRecord.TutType == TutorialRecord.Type.HAND_CLICK;
+            return true;
         }
 
-        public virtual void InitData(GameObject currentLevel, int levelId)
+        /// <summary>
+        /// Return value show that wether the Init-process is success or not
+        /// </summary>
+        /// <param name="currentLevel"></param>
+        /// <param name="levelId"></param>
+        /// <returns></returns>
+        public virtual bool TryInitData(GameObject currentLevel, int levelId)
         {
             this.levelId = levelId;
             tutorialRecord = TutorialManager.Ins.Data.GetTutRecord(levelId);
@@ -88,7 +96,7 @@ namespace NamPhuThuy.PuzzleTutorial
             {
                 Debug.LogWarning(message: $"No tutorial record found for levelId: {levelId}");
                 isForceFollow = false;
-                return;
+                return false;
             }
 
             _currentStepIndex = 0;
@@ -98,6 +106,7 @@ namespace NamPhuThuy.PuzzleTutorial
             }
 
             isForceFollow = tutorialRecord.TutType == TutorialRecord.Type.HAND_CLICK;
+            return true;
         }
         
         public virtual void ResetState()
