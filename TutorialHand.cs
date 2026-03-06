@@ -5,7 +5,6 @@ Github: https://github.com/NamPhuThuy
 
 using System.Collections;
 using DG.Tweening;
-using NamPhuThuy.Common;
 using Spine.Unity;
 using UnityEngine;
 using UnityEngine.UI;
@@ -76,14 +75,14 @@ namespace NamPhuThuy.PuzzleTutorial
        
         public void EnableHand()
         {
-            DebugLogger.Log();
+            Debug.Log(message:$"[TutorialHand.EnableHand]");
 
             switch (handType)
             {
                 case HandType.IMAGE:
                     if (handImage == null)
                     {
-                        DebugLogger.LogWarning(message: $"handImage is null");
+                        Debug.Log(message:$"[TutorialHand.EnableHand()] handImage is null");
                         break;
                     }
                     
@@ -92,27 +91,27 @@ namespace NamPhuThuy.PuzzleTutorial
                 case HandType.SKELETON_GRAPHIC:
                     if (handSkeGraphic == null)
                     {
-                        DebugLogger.LogWarning(message: $"handSkeGraphic is null");
+                        Debug.Log(message:$"[TutorialHand.EnableHand()] handSkeGraphic is null");
                         break;
                     }
                     
                     handSkeGraphic.gameObject.SetActive(true);
                     break;
                 case HandType.NONE:
-                    DebugLogger.LogWarning(message: $"handType is NONE");
+                    Debug.Log(message:$"[TutorialHand.EnableHand()] handType is NONE");
                     break;
             }
         }
 
         public void DisableHand()
         {
-            DebugLogger.Log();
+            Debug.Log(message:$"[TutorialHand.DisableHand()]");
             switch (handType)
             {
                 case HandType.IMAGE:
                     if (handImage == null)
                     {
-                        DebugLogger.LogWarning(message: $"handImage is null");
+                        Debug.Log(message:$"[TutorialHand.DisableHand()] handImage is null");
                         break;
                     }
                     
@@ -121,28 +120,28 @@ namespace NamPhuThuy.PuzzleTutorial
                 case HandType.SKELETON_GRAPHIC:
                     if (handSkeGraphic == null)
                     {
-                        DebugLogger.LogWarning(message: $"handSkeGraphic is null");
+                        Debug.Log(message:$"[TutorialHand.DisableHand()] handSkeGraphic is null");
                         break;
                     }
                     
                     handSkeGraphic.gameObject.SetActive(false);
                     break;
                 case HandType.NONE:
-                    DebugLogger.LogWarning(message: $"handType is NONE");
+                    Debug.Log(message:$"[TutorialHand.DisableHand()] handType is NONE");
                     break;
             }
         }
 
         public void DisableAllHands()
         {
-            DebugLogger.Log();
+            Debug.Log(message:$"[TutorialHand.DisableAllHands()]");
             if (handImage != null)
             {
                 handImage.gameObject.SetActive(false);
             }
             else
             {
-                DebugLogger.LogWarning(message: $"handImage is null");
+                Debug.Log(message:$"[TutorialHand.DisableAllHands()] handImage is null");
             }
                     
             if (handSkeGraphic != null)
@@ -151,7 +150,7 @@ namespace NamPhuThuy.PuzzleTutorial
             }
             else
             {
-                DebugLogger.LogWarning(message: $"handSkeGraphic is null");
+                Debug.Log(message:$"[TutorialHand.DisableAllHands()] handSkeGraphic is null");
             }
         }
 
@@ -173,13 +172,13 @@ namespace NamPhuThuy.PuzzleTutorial
         
         public void SetWorldPosition(Vector3 worldPos)
         {
-            DebugLogger.Log();
+            Debug.Log(message:$"[TutorialHand.DisableAllHands()] SetWorldPosition");
             transform.position = worldPos + pivotOffset;
         }
 
         public void SetScreenPosition(Vector2 screenPos)
         {
-            DebugLogger.Log();
+            Debug.Log(message:$"[TutorialHand.DisableAllHands()] SetScreenPosition");
             
             // treat pivotOffset as screen\-space offset (x,y). z is ignored.
             Vector3 screenWithOffset = new Vector3(
@@ -217,7 +216,7 @@ namespace NamPhuThuy.PuzzleTutorial
             bool loopPingPong = false,
             int loops = -1)
         {
-            DebugLogger.Log(message: $"From: {fromScreenPos}, To: {toScreenPos}, Duration: {duration}");
+            Debug.Log(message:$"[TutorialHand.DisableAllHands()] From: {fromScreenPos}, To: {toScreenPos}, Duration: {duration}");
 
             if (rectTransform == null)
                 rectTransform = GetComponent<RectTransform>();
@@ -256,10 +255,11 @@ namespace NamPhuThuy.PuzzleTutorial
 
         public void MoveHandToWorldObject(Transform targetTransform)
         {
-            DebugLogger.Log();
+            Debug.Log(message:$"[TutorialHand.MoveHandToWorldObject()]");
+            
             if (targetTransform == null)
             {
-                DebugLogger.Log(message: $"Return");
+                Debug.Log(message:$"[TutorialHand.MoveHandToWorldObject()] Return");
                 return;
             }
             SetWorldPosition(targetTransform.position);
@@ -267,10 +267,10 @@ namespace NamPhuThuy.PuzzleTutorial
 
         public void MoveToScreenPointFromWorldFast(Vector3 worldPosition)
         {
-            DebugLogger.Log();
+            Debug.Log(message:$"[TutorialHand.MoveToScreenPointFromWorldFast()]");
             if (Camera.main == null)
             {
-                DebugLogger.Log(message: $"Return");
+                Debug.Log(message:$"[TutorialHand.MoveToScreenPointFromWorldFast()] Return");
                 return;
             }
             Vector3 screenPos = Camera.main.WorldToScreenPoint(worldPosition);
@@ -284,10 +284,9 @@ namespace NamPhuThuy.PuzzleTutorial
         /// <param name="duration"></param>
         public void MoveToScreenPointFromWorldTween(Vector3 worldPosition, float duration = 0.5f)
         {
-            DebugLogger.Log();
             if (Camera.main == null)
             {
-                DebugLogger.Log(message: "Return");
+                Debug.Log(message:$"[TutorialHand.MoveToScreenPointFromWorldTween()] Return");
                 return;
             }
 
@@ -347,7 +346,7 @@ namespace NamPhuThuy.PuzzleTutorial
         
         public IEnumerator IE_TurnOffWithDelay(float delay)
         {
-            DebugLogger.Log(message: $"Delay: {delay}");
+            Debug.Log(message:$"[TutorialHand.IE_TurnOffWithDelay()] delay: {delay}");
             yield return new WaitForSeconds(delay);
             DisableHand();
         }
@@ -413,17 +412,17 @@ namespace NamPhuThuy.PuzzleTutorial
         
         public void PlayAnimation(string animName, bool loop = true)
         {
-            DebugLogger.Log(message: $"PlayAnimation: {animName}, loop: {loop}");
+            Debug.Log(message:$"[TutorialHand.PlayAnimation()] PlayAnimation: {animName}, loop: {loop}");
             if (handSkeGraphic != null)
             {
-                DebugLogger.Log(message: $"Play Animation: {animName}, loop: {loop}");
+                // DebugLogger.Log(message: $"Play Animation: {animName}, loop: {loop}");
                 handSkeGraphic.AnimationState.SetAnimation(0, animName, loop);
             }
         }
         
         public void StopAnimation()
         {
-            DebugLogger.Log(message: $"StopAnimation");
+            Debug.Log(message:$"[TutorialHand.PlayAnimation()] StopAnimation");
             if (handSkeGraphic != null)
             {
                 handSkeGraphic.AnimationState.ClearTrack(0);
