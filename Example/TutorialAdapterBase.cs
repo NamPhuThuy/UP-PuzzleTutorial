@@ -126,7 +126,7 @@ namespace NamPhuThuy.PuzzleTutorial
             }
         }
 
-        protected virtual void EndTutorialSequence()
+        protected virtual void MarkTutorialEnded()
         {
             if (TutorialManager.Ins != null && TutorialManager.Ins.TutorialHand != null)
             {
@@ -155,6 +155,38 @@ namespace NamPhuThuy.PuzzleTutorial
             _currentStepIndex = 0;
             _tutorialRoutine = StartCoroutine(IE_TutorialSequence());
         }
+        
+        /// <summary>
+        /// Immediately stops the entire tutorial sequence, skipping all remaining steps.
+        /// </summary>
+        public virtual void StopTutorial()
+        {
+            Debug.Log(message: $"[TutorialAdapterBase].StopTutorial() - Stopping at step {_currentStepIndex}");
+
+            // Stop the main sequence coroutine
+            if (_tutorialRoutine != null)
+            {
+                StopCoroutine(_tutorialRoutine);
+                _tutorialRoutine = null;
+            }
+
+            // Stop auto-complete if running
+            if (_autoCompleteCo != null)
+            {
+                StopCoroutine(_autoCompleteCo);
+                _autoCompleteCo = null;
+            }
+
+            _isCurrentStepCompleted = false;
+
+            // Clean up visuals
+            if (TutorialManager.Ins != null && TutorialManager.Ins.TutorialHand != null)
+            {
+                TutorialManager.Ins.TutorialHand.DisableAllHands();
+            }
+
+            MarkTutorialEnded();
+        }
 
         private Coroutine _autoCompleteCo;
         
@@ -181,7 +213,7 @@ namespace NamPhuThuy.PuzzleTutorial
             }
 
             Debug.Log(message: "All tutorial steps completed.");
-            EndTutorialSequence();
+            MarkTutorialEnded();
 
             _tutorialRoutine = null;
 
@@ -194,6 +226,9 @@ namespace NamPhuThuy.PuzzleTutorial
         #endregion
         
 
+        /*
+         These methods are template, in the inherited script, you will need to override it all - without call the base-method
+         */
         #region Template Methods
 
         protected virtual GameObject GetTargetForStep(TutorialStepRecord step)

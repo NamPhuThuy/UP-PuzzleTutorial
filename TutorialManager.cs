@@ -26,7 +26,6 @@ namespace NamPhuThuy.PuzzleTutorial
             {
                 return _tutorialHand;
             }
-              
         }
 
         [Header("Prefabs")] 
