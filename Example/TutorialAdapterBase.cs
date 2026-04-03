@@ -257,6 +257,12 @@ namespace NamPhuThuy.PuzzleTutorial
         protected virtual void StartStep(TutorialStepRecord step)
         {
             currentTarget = GetTargetForStep(step);
+            StartCoroutine(IE_StartStep(step));
+        }
+
+        protected virtual IEnumerator IE_StartStep(TutorialStepRecord step)
+        {
+            yield return new WaitForSeconds(step.DelayBefore);
             
             switch (step.Type)
             {
@@ -272,7 +278,6 @@ namespace NamPhuThuy.PuzzleTutorial
                     break;
             }
         }
-
 
         
         #endregion
