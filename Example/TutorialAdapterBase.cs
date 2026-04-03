@@ -256,16 +256,16 @@ namespace NamPhuThuy.PuzzleTutorial
         /// </summary>
         protected virtual void StartStep(TutorialStepRecord step)
         {
-            GameObject target = GetTargetForStep(step);
+            currentTarget = GetTargetForStep(step);
             
             switch (step.Type)
             {
                 case TutorialStepType.CLICK_FIRST_ITEM:
                 case TutorialStepType.CLICK_SECOND_ITEM:
-                    if (target != null && TutorialManager.Ins.TutorialHand != null)
+                    if (currentTarget != null && TutorialManager.Ins.TutorialHand != null)
                     {
                         TutorialManager.Ins.TutorialHand.EnableHand();
-                        TutorialManager.Ins.TutorialHand.MoveToScreenPointFromWorldTween(target.transform.position, 0.4f);
+                        TutorialManager.Ins.TutorialHand.MoveToScreenPointFromWorldTween(currentTarget.transform.position, 0.4f);
                     }
                     break;
                 case TutorialStepType.HAND_POINT_TARGET_WAIT_CLICK:
