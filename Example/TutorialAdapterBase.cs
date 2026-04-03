@@ -188,7 +188,7 @@ namespace NamPhuThuy.PuzzleTutorial
             MarkTutorialEnded();
         }
 
-        private Coroutine _autoCompleteCo;
+        protected Coroutine _autoCompleteCo;
         
         private IEnumerator IE_TutorialSequence()
         {
@@ -199,11 +199,6 @@ namespace NamPhuThuy.PuzzleTutorial
 
                 _isCurrentStepCompleted = false;
                 StartStep(currentStepRecord);
-
-                if (currentStepRecord.AutoCompleteAfter != 0)
-                {
-                    _autoCompleteCo = StartCoroutine(IE_AutoComplete(currentStepRecord.AutoCompleteAfter));
-                }
 
                 yield return new WaitUntil(() => _isCurrentStepCompleted);
                 if (_autoCompleteCo != null) StopCoroutine(_autoCompleteCo); // Ensure the auto-complete mechanic is finished
@@ -216,12 +211,12 @@ namespace NamPhuThuy.PuzzleTutorial
             MarkTutorialEnded();
 
             _tutorialRoutine = null;
+        }
 
-            IEnumerator IE_AutoComplete(float delay)
-            {
-                yield return new WaitForSeconds(delay);
-                _isCurrentStepCompleted = true;
-            }
+        protected IEnumerator IE_AutoEndCurrentStep(float delay)
+        {
+            yield return new WaitForSeconds(delay);
+            _isCurrentStepCompleted = true;
         }
         #endregion
         
@@ -263,6 +258,11 @@ namespace NamPhuThuy.PuzzleTutorial
         protected virtual IEnumerator IE_StartStep(TutorialStepRecord step)
         {
             yield return new WaitForSeconds(step.DelayBefore);
+
+            if (currentStepRecord.AutoCompleteAfter != 0)
+            {
+                _autoCompleteCo = StartCoroutine(IE_AutoEndCurrentStep(currentStepRecord.AutoCompleteAfter));
+            }
             
             switch (step.Type)
             {
