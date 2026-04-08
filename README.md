@@ -26,3 +26,7 @@ _Project/
 
 ## NOTE
 When tutorial-step is completed in gameplay, call the TutorialAdapterBase.OnStepCompletedFromGameplay() to mark the completion
+
+The module is lack of Booster-declaration, use your game Booster to match with this
+
+If Spine module is being used, ensure added the scripting symbol "USE_SPINE"

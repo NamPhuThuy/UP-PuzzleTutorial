@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace NamPhuThuy.PuzzleTutorial
 {
-    public partial class TutorialManager : Common.Singleton<TutorialManager>
+    public partial class TutorialManager : Singleton<TutorialManager>
     {
         [Header("Flags")] 
         [SerializeField] private bool isEnable;
