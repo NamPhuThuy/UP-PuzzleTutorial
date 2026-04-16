@@ -238,6 +238,16 @@ namespace NamPhuThuy.PuzzleTutorial
                     break;
                 case TutorialStepType.HAND_POINT_TARGET_WAIT_CLICK:
                     break;
+                case TutorialStepType.HAND_POINT_TARGET_WAIT_DRAG:
+                    TutorialManager.Ins.TutorialHand.EnableHand();
+                    TutorialManager.Ins.TutorialHand.PlayAnimation("begin");
+                    TutorialManager.Ins.TutorialHand.TweenMoveBetweenScreenPointsCurved(
+                        new Vector2(Screen.width * 0.25f, Screen.height * 0.625f),
+                        new Vector2(Screen.width * 0.75f, Screen.height * 0.625f),
+                        duration: .8f,
+                        loopPingPong: true,
+                        curveHeight: - 100f);    
+                    break;
             }
             
             
