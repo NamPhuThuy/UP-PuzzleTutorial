@@ -175,10 +175,11 @@ namespace NamPhuThuy.PuzzleTutorial
         /// <summary>
         /// 
         /// </summary>
-        HAND_POINT_TARGET_WAIT_HOLD = 11,
-        HAND_POINT_BOOSTER_WAIT_CLICK = 12,
+        HAND_POINT_BOOSTER_WAIT_CLICK = 11,
+        HAND_POINT_TARGET_WAIT_HOLD = 12,
         HAND_POINT_TARGET_WAIT_CLICK = 13,
-        HAND_POINT_FOR_BOOSTER = 14,
+        HAND_POINT_TARGET_WAIT_DRAG = 14,
+        HAND_POINT_TARGET_WAIT_ZOOM = 15,
 
         /// <summary>
         /// For special custom steps handled in code
